@@ -65,6 +65,7 @@ namespace Cry.Features.DataExtractors
         private async Task ExtractAndSaveFilesAsync(SqlDataReader reader)
         {
             string fileName = GetFileName(reader);
+            string fileType = GetFileType(reader);
             object blobObject = reader[_cliCommand.ColumnBlob];
 
             if (blobObject == null)
@@ -74,7 +75,7 @@ namespace Cry.Features.DataExtractors
 
             byte[] blob = GetByteArrayFromColumn(blobObject);
 
-            string outputFile = $"{fileName}.{_cliCommand.FileType}";
+            string outputFile = $"{fileName}.{fileType}";
             string outputPath = Path.Combine(_cliCommand.Output, outputFile);
 
             if (!await _fileWriter.SaveFileAsync(outputPath, blob))
@@ -113,7 +114,22 @@ namespace Cry.Features.DataExtractors
 
             return blob;
         }
-
+        private string GetFileType(SqlDataReader reader)
+        {
+            string? fileType = null;
+            if (!string.IsNullOrEmpty(_cliCommand.ColumnFileType))
+            {
+                fileType = reader[_cliCommand.ColumnFileType].ToString();
+            }
+            if (!string.IsNullOrEmpty(_cliCommand.FileType))
+            {
+                fileType = _cliCommand.FileType;
+            }
+            if (fileType == null)
+                throw new Exception("No output filen name assigned.");
+            
+            return fileType;
+        }
         private string GetFileName(SqlDataReader reader)
         {
             string? filename = null;
@@ -129,9 +145,7 @@ namespace Cry.Features.DataExtractors
             {
                 throw new Exception("No output filen name assigned.");
             }
-
             return filename;
-            
         }
     }
 
