@@ -15,6 +15,8 @@ namespace Cry.Features.Commands
         public string? Username { get; set; }
         [Help("User password")]
         public string? Password { get; set; }
+        [Help("Trust server certificate")]
+        public bool TrustCertificate { get; set; } = false;
         [Help("Query to extract data from")]
         public string? Query { get; set; }
         [Help("Set static output file type, same for all files")]

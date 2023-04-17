@@ -25,7 +25,8 @@ namespace Cry.Features.Connection
                 DataSource = _sqlServerData.Endpoint,
                 UserID = _sqlServerData.Username,
                 Password = _sqlServerData.Password,
-                InitialCatalog = _sqlServerData.Database
+                InitialCatalog = _sqlServerData.Database,
+                TrustServerCertificate = _sqlServerData.TrustCertificate
             };
 
             return new SqlConnection(builder.ConnectionString);
