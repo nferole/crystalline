@@ -3,11 +3,13 @@ using Cry.Features.Connection;
 using Cry.Features.FileWriters;
 using Cry.Features.Inputs;
 using Cry.Features.Logging;
+using Ferole.CommandLineUtils.ConsoleHelpers;
 using Ferole.CommandLineUtils.Inputs;
 using Microsoft.Data.SqlClient;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IO;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace Cry.Features.DataExtractors
@@ -32,10 +34,15 @@ namespace Cry.Features.DataExtractors
         {
             try
             {
+                Console.WriteLine("Connecting to target database...");
+
                 using var connection = _connectionFactory.CreateSqlServerConnection();
                 await connection.OpenAsync();
+                Console.WriteLine("Connection to database established.");
 
                 using var command = new SqlCommand(_cliCommand.Query, connection);
+
+                Console.WriteLine("Executing Query...");
                 using var reader = await command.ExecuteReaderAsync();
 
                 ValidateReaderHasRows(reader);
@@ -62,7 +69,7 @@ namespace Cry.Features.DataExtractors
             }
         }
 
-        private async Task ExtractAndSaveFilesAsync(SqlDataReader reader)
+        private async Task<bool> ExtractAndSaveFilesAsync(SqlDataReader reader)
         {
             string fileName = GetFileName(reader);
             string fileType = GetFileType(reader);
@@ -74,27 +81,53 @@ namespace Cry.Features.DataExtractors
             }
 
             byte[] blob = GetByteArrayFromColumn(blobObject);
-
             string outputFile = $"{fileName}.{fileType}";
             string outputPath = Path.Combine(_cliCommand.Output, outputFile);
 
+            CliExt.WriteSameLine($"Processing file {outputPath}...");
             if (!await _fileWriter.SaveFileAsync(outputPath, blob))
             {
-                var message = $"File {outputPath} already exists, skipping.";
-                Console.WriteLine(message);
+                var message = $"File {outputPath} could not be written, skipping.";
+                CliExt.WriteSameLineColor(message, ConsoleColor.Yellow);
                 await _logWriter.WriteLineAsync(message);
+                return false;
             }
             else
             {
-                var message = "";
-                foreach(var column in _cliCommand.ColumnsLog)
+                CliExt.WriteSameLine($"\rVerifying {outputPath}...");
+                if (_cliCommand.VerifyFiles)
+                    await VerifyFileMatchesData(blob, outputPath);
+
+                CliExt.WriteSameLineColor($"\rFile {outputFile} verified and done!", ConsoleColor.Green);
+
+                foreach (var column in _cliCommand.ColumnsLog)
                 {
                     await _logWriter.WriteLineAsync($"{reader[column]},{fileName}");
-
                 }
+
+                return true;
             }
         }
+        private async Task VerifyFileMatchesData(byte[] originalData, string filePath)
+        {
+            byte[] fileData = await File.ReadAllBytesAsync(filePath);
 
+            string originalHash = ComputeHash(originalData);
+            string fileHash = ComputeHash(fileData);
+
+            if (originalHash != fileHash)
+            {
+                var message = $"Mismatch error: {filePath} does not match the original data. Saved to log.";
+                CliExt.WriteSameLine(message);
+                await _logWriter.WriteLineAsync(message);
+            }
+        }
+        private string ComputeHash(byte[] data)
+        {
+            using var sha256 = SHA256.Create();
+            byte[] hash = sha256.ComputeHash(data);
+            return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
+        }
         private static byte[] GetByteArrayFromColumn(object blobObject)
         {
             byte[] blob;

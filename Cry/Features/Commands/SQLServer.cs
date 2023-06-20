@@ -16,7 +16,9 @@ namespace Cry.Features.Commands
         [Help("User password")]
         public string? Password { get; set; }
         [Help("Trust server certificate")]
-        public bool TrustCertificate { get; set; } = false;
+        public bool TrustServerCertificate { get; set; } = false;
+        [Help("Verify file by SHA hash checksum")]
+        public bool VerifyFiles { get; set; } = false;
         [Help("Query to extract data from")]
         public string? Query { get; set; }
         [Help("Set static output file type, same for all files")]
@@ -35,7 +37,7 @@ namespace Cry.Features.Commands
         public string? ColumnBlob { get; set; }
         [Help("Set a path to a file to enable transformation logging")]
         public string LogPath { get; set; } = String.Empty;
-        [Help("Specify a csv list of column names from [Query] to build a log message: [Column1...]>Filename.FileType")]
+        [Help("Specify a csv list of columns from [Query] to build a log msg: [Col1...]>Filename.FileType")]
         public List<string> ColumnsLog { get; set; } = new List<string>();
 
         [ConfigPath]
