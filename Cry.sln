@@ -5,7 +5,9 @@ VisualStudioVersion = 17.5.33424.131
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cry", "Cry\Cry.csproj", "{3F5FFDA5-873F-4542-8E96-DF424A23C46E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ferole.CommandLineUtils", "Ferole.CommandLineUtils\Ferole.CommandLineUtils.csproj", "{B1A267B9-5045-4CC9-BB14-F3A744D2A78E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ferole.CommandLineUtils", "Ferole.CommandLineUtils\Ferole.CommandLineUtils.csproj", "{B1A267B9-5045-4CC9-BB14-F3A744D2A78E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cry.Tests", "Cry.Tests\Cry.Tests.csproj", "{805829CA-29C4-44CF-A77F-A627FBE9A772}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{B1A267B9-5045-4CC9-BB14-F3A744D2A78E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B1A267B9-5045-4CC9-BB14-F3A744D2A78E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B1A267B9-5045-4CC9-BB14-F3A744D2A78E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{805829CA-29C4-44CF-A77F-A627FBE9A772}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{805829CA-29C4-44CF-A77F-A627FBE9A772}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{805829CA-29C4-44CF-A77F-A627FBE9A772}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{805829CA-29C4-44CF-A77F-A627FBE9A772}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
